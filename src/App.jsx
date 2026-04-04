@@ -1,72 +1,72 @@
-import { useState } from 'react';
-import Registration from './components/Registration';
-import DrawLots from './components/DrawLots';
-import HeatDisplay from './components/HeatDisplay';
+import { useState, useEffect } from 'react';
+import RacingApp from './components/racing/RacingApp';
+import FootballApp from './components/football/FootballApp';
 
 function App() {
-  const [step, setStep] = useState('registration'); // registration, drawing, result
-  const [teams, setTeams] = useState([]);
-  const [heats, setHeats] = useState([]);
+  // 'menu', 'racing', 'football'
+  const [appMode, setAppMode] = useState('menu');
 
-  const handleRegistrationComplete = () => {
-    const N = teams.length;
-    if (N === 0) return;
-    
-    // Tự động tính số lượt chơi (mỗi lượt tối đa 4 đội)
-    const numHeats = Math.ceil(N / 4);
-    const base = Math.floor(N / numHeats);
-    const remainder = N % numHeats;
-    
-    const newHeats = [];
-    for (let i = 0; i < numHeats; i++) {
-       newHeats.push({
-         name: `Lượt ${i + 1}`,
-         capacity: i < remainder ? base + 1 : base,
-         teams: []
-       });
+  useEffect(() => {
+    // Thay đổi background tùy theo chế độ
+    if (appMode === 'football') {
+      document.body.className = 'bg-football';
+    } else {
+      document.body.className = '';
     }
-    setHeats(newHeats);
-    setStep('drawing');
-  };
+  }, [appMode]);
 
-  const handleDrawingComplete = () => {
-    // Optionally wait a bit before moving to results or just stay there
-  };
+  if (appMode === 'racing') {
+    return <RacingApp onBack={() => setAppMode('menu')} />;
+  }
 
-  const resetTournament = () => {
-    setTeams([]);
-    setHeats([]);
-    setStep('registration');
-  };
+  if (appMode === 'football') {
+    return <FootballApp onBack={() => setAppMode('menu')} />;
+  }
 
   return (
     <div style={{ paddingBottom: '50px' }}>
-      <h1 className="title-glow" style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
-        TỔ CHỨC ĐUA XE MÔ PHỎNG
+      <h1 className="title-glow main-title">
+        HỆ THỐNG QUẢN LÝ TIỆN ÍCH
       </h1>
+      <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginBottom: '4rem' }}>
+        Vui lòng chọn hệ thống bạn muốn sử dụng
+      </p>
 
-      {step === 'registration' && (
-        <Registration 
-          teams={teams} 
-          setTeams={setTeams} 
-          onNext={handleRegistrationComplete} 
-        />
-      )}
+      <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', flexWrap: 'wrap', padding: '0 1rem' }}>
+        <button 
+          className="glass-panel menu-card"
+          onClick={() => setAppMode('racing')}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = 'var(--primary)';
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 243, 255, 0.4)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'var(--glass-border)';
+            e.currentTarget.style.boxShadow = '0 8px 32px 0 rgba(0, 0, 0, 0.37)';
+          }}
+        >
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏎️</div>
+          <h2 className="title-glow" style={{ color: 'var(--primary)' }}>Đua xe Mô phỏng</h2>
+          <p style={{ color: 'var(--text-muted)' }}>Bốc thăm lượt thi đấu trên Simulator</p>
+        </button>
 
-      {step === 'drawing' && (
-        <DrawLots 
-          teams={teams} 
-          heats={heats} 
-          setHeats={setHeats} 
-          onComplete={handleDrawingComplete}
-        />
-      )}
-      
-      {step === 'drawing' && heats.reduce((s, h) => s + h.teams.length, 0) === teams.length && teams.length > 0 && (
-        <div style={{ marginTop: '2rem' }}>
-          <button className="btn" onClick={resetTournament}>BẮT ĐẦU GIẢI ĐẤU MỚI</button>
-        </div>
-      )}
+        <button 
+          className="glass-panel menu-card"
+          onClick={() => setAppMode('football')}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = '#3498db';
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(52, 152, 219, 0.4)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'var(--glass-border)';
+            e.currentTarget.style.boxShadow = '0 8px 32px 0 rgba(0, 0, 0, 0.37)';
+          }}
+        >
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚽</div>
+          <h2 className="title-glow" style={{ color: '#3498db' }}>Bốc thăm Bóng đá</h2>
+          <p style={{ color: 'var(--text-muted)' }}>Chia bảng, xếp hạt giống tự động</p>
+        </button>
+      </div>
     </div>
   );
 }
