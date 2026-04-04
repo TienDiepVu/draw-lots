@@ -2,13 +2,23 @@ import React from 'react';
 
 export default function FootballGroupSetup({ teamsCount, numGroups, setNumGroups, onNext, onBack }) {
   const handleNumChange = (e) => {
-    const val = parseInt(e.target.value, 10);
-    if (!isNaN(val) && val >= 1 && val <= teamsCount) {
-      setNumGroups(val);
+    const rawVal = e.target.value;
+    if (rawVal === '') {
+      setNumGroups('');
+      return;
+    }
+    const val = parseInt(rawVal, 10);
+    if (!isNaN(val)) {
+        if (val <= teamsCount) setNumGroups(val);
+        else setNumGroups(teamsCount);
     }
   };
 
   const handleNext = () => {
+    if (numGroups === '' || numGroups < 1) {
+        alert("Vui lòng nhập số lượng bảng đấu hợp lệ (ít nhất 1 bảng).");
+        return;
+    }
     onNext(numGroups);
   };
 

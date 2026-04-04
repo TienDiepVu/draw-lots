@@ -10,14 +10,16 @@ export default function FootballRegistration({ teams, setTeams, onNext }) {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    if (numTeams === '') return;
+    const count = parseInt(numTeams, 10);
     // Sync array length with numTeams when numTeams changes manually
-    if (numTeams > teamNames.length) {
+    if (count > teamNames.length) {
       setTeamNames([
         ...teamNames,
-        ...Array.from({ length: numTeams - teamNames.length }, (_, i) => `Đội ${teamNames.length + i + 1}`)
+        ...Array.from({ length: count - teamNames.length }, (_, i) => `Đội ${teamNames.length + i + 1}`)
       ]);
-    } else if (numTeams < teamNames.length && numTeams >= 2) {
-      setTeamNames(teamNames.slice(0, numTeams));
+    } else if (count < teamNames.length && count >= 2) {
+      setTeamNames(teamNames.slice(0, count));
     }
   }, [numTeams, teamNames]);
 
@@ -28,9 +30,15 @@ export default function FootballRegistration({ teams, setTeams, onNext }) {
   };
 
   const handleNumChange = (e) => {
-    const val = parseInt(e.target.value, 10);
-    if (!isNaN(val) && val >= 2 && val <= 64) {
-      setNumTeams(val);
+    const rawVal = e.target.value;
+    if (rawVal === '') {
+      setNumTeams('');
+      return;
+    }
+    const val = parseInt(rawVal, 10);
+    if (!isNaN(val)) {
+      if (val <= 64) setNumTeams(val);
+      else setNumTeams(64);
     }
   };
 
@@ -94,6 +102,10 @@ export default function FootballRegistration({ teams, setTeams, onNext }) {
   };
 
   const submitRegistration = () => {
+    if (numTeams === '' || numTeams < 2) {
+        alert("Vui lòng nhập ít nhất 2 đội");
+        return;
+    }
     const finalTeams = teamNames.map((t, i) => t.trim() || `Đội ${i + 1}`);
     setTeams(finalTeams);
     onNext();
