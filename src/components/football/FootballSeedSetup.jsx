@@ -27,10 +27,14 @@ export default function FootballSeedSetup({ teams, numGroups, groups, onNext, on
     onNext(newGroups);
   };
 
+  const handleSkip = () => {
+    onNext(groups);
+  };
+
   return (
     <div className="glass-panel">
       <h2 className="title-glow">Bước 3.1: Chọn Đội Hạt Giống</h2>
-      <p style={{ color: 'var(--text-muted)' }}>Với <strong style={{ color: 'var(--primary)' }}>{numGroups}</strong> bảng đấu, bạn cần chọn đủ <strong style={{ color: 'var(--primary)' }}>{numGroups}</strong> đội hạt giống.</p>
+      <p style={{ color: 'var(--text-muted)' }}>Với <strong style={{ color: 'var(--primary)' }}>{numGroups}</strong> bảng đấu, bạn có thể chọn <strong style={{ color: 'var(--primary)' }}>{numGroups}</strong> đội hạt giống (hoặc không chọn để bốc ngẫu nhiên toàn bộ).</p>
       
       <div style={{ padding: '10px 20px', background: selectedSeeds.length === numGroups ? 'rgba(0, 243, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)', border: `1px solid ${selectedSeeds.length === numGroups ? 'var(--primary)' : 'var(--glass-border)'}`, borderRadius: '8px', margin: '20px 0', color: selectedSeeds.length === numGroups ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 'bold' }}>
         Đã chọn: {selectedSeeds.length} / {numGroups}
@@ -67,13 +71,19 @@ export default function FootballSeedSetup({ teams, numGroups, groups, onNext, on
         <button className="btn btn-secondary" onClick={onBack}>
           Quay lại Bước 2
         </button>
-        <button 
-          className="btn" 
-          onClick={handleNext}
-          disabled={selectedSeeds.length !== numGroups}
-        >
-          Xác nhận & Vào Bốc thăm
-        </button>
+        {selectedSeeds.length === 0 ? (
+          <button className="btn" onClick={handleSkip}>
+            Bỏ qua & Đảo ngẫu nhiên tất cả
+          </button>
+        ) : (
+          <button 
+            className="btn" 
+            onClick={handleNext}
+            disabled={selectedSeeds.length !== numGroups}
+          >
+            Chốt Hạt giống & Bốc thăm
+          </button>
+        )}
       </div>
     </div>
   );
