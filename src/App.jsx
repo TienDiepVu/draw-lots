@@ -10,6 +10,8 @@ function App() {
     // Thay đổi background tùy theo chế độ
     if (appMode === 'football') {
       document.body.className = 'bg-football';
+    } else if (appMode === 'racing') {
+      document.body.className = 'bg-racing';
     } else {
       document.body.className = '';
     }
