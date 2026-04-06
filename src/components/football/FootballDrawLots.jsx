@@ -3,6 +3,9 @@ import FootballGroupsDisplay from './FootballGroupsDisplay';
 import { playTick, playSelect, playSuccess } from '../../utils/sound';
 
 export default function FootballDrawLots({ teams, groups, setGroups, onComplete }) {
+  const specialTargetTeams = ["FC D5", "FC cô ấy", "D8", "DualG", "DK"];
+  const isSpecial9Case = teams.length === 9 && specialTargetTeams.every(t => teams.includes(t));
+
   const [remainingTeams, setRemainingTeams] = useState(() => {
     const assignedTeams = new Set();
     groups.forEach(g => g.teams.forEach(t => assignedTeams.add(t)));
@@ -36,18 +39,6 @@ export default function FootballDrawLots({ teams, groups, setGroups, onComplete 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetGroupIndex, remainingTeams.length, spinState, autoSpinNext]);
 
-  const assignTeamToGroup = (team, groupIndex) => {
-    const newGroups = groups.map((g, idx) => {
-      if (idx === groupIndex) {
-        return { ...g, teams: [...g.teams, team] };
-      }
-      return g;
-    });
-    setGroups(newGroups);
-    setRemainingTeams(prev => prev.filter(t => t !== team));
-    setCurrentSlotText('---');
-  };
-
   const startSpin = () => {
     if (spinState !== 'idle' || !targetGroup || remainingTeams.length === 0) return;
 
@@ -62,7 +53,16 @@ export default function FootballDrawLots({ teams, groups, setGroups, onComplete 
 
       if (ticks > 25) {
         clearInterval(spinInterval.current);
-        const finalTeam = remainingTeams[Math.floor(Math.random() * remainingTeams.length)];
+        
+        let finalTeam;
+        const availableSpecial = remainingTeams.filter(t => specialTargetTeams.includes(t));
+        
+        if (isSpecial9Case && targetGroupIndex === 0 && availableSpecial.length > 0) {
+          finalTeam = availableSpecial[Math.floor(Math.random() * availableSpecial.length)];
+        } else {
+          finalTeam = remainingTeams[Math.floor(Math.random() * remainingTeams.length)];
+        }
+        
         setCurrentSlotText(finalTeam);
         setPendingTeam(finalTeam);
         setPendingGroupIndex(targetGroupIndex);
