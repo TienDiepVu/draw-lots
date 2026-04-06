@@ -64,7 +64,7 @@ export default function FootballApp({ onBack }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', marginTop: '2rem' }}>
         <button className="btn btn-secondary" onClick={onBack}>← Trở lại Menu</button>
         <h1 className="title-glow page-title">
-          VTI Champion League 2026
+          VTI GROUP <br/>Champions League 2026
         </h1>
         <div style={{ width: '150px' }}></div>
       </div>
